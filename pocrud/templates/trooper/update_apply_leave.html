@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Update Applied Leave{% endblock %}
+
+{% block page_header %}Update Applied Leave{% endblock %}
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Leaves Form</h6>
+    </div>
+    <div class="card-body">
+        <form id="leaveForm" data-leave-url="{% url 'load_leaves' %}" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" class="btn btn-primary btn-user btn-block">
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    // Function to perform the AJAX request
+    function loadLeaves(trooperId) {
+        const url = $("#leaveForm").attr("data-leave-url");
+
+        $.ajax({
+            url: url,
+            data: {
+                'trooper_id': trooperId
+            },
+
+            success: function (data) {
+                $("#id_current_leave").html(data);
+            }
+        });
+    }
+
+    const defaultTrooperId = {{trooper_id}};  
+
+    // Call the function with the default value
+    loadLeaves(defaultTrooperId);
+
+    // Attach the change event listener
+    $("#id_trooper").change(function () {
+        const trooperId = $(this).val();
+        loadLeaves(trooperId);
+    });
+</script>
+
+
+{% endblock %}
+
+

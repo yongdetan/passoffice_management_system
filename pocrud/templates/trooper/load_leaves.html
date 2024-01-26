@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for l in leave %}
+<option value="{{ l.id }}">{{ l.leave_type }} [{{ l.number_of_leaves }}]</option>
+{% endfor %}

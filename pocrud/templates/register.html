@@ -1,0 +1,58 @@
+{% extends 'base/base_prelogin.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Register{% endblock %}
+
+{% block content %}
+
+    <!-- Nested Row within Card Body -->
+    <div class="row">
+        <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+        <div class="col-lg-7">
+            <div class="p-5">
+                <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                </div>
+
+                <!--  START OF FORM -->
+                <form method="post" class="user" action="">
+                    {% csrf_token %}
+
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            {% render_field form.first_name placeholder="First Name" class+="form-control form-control-user" %}
+                        </div>
+                        <div class="col-sm-6">
+                            {% render_field form.last_name placeholder="Last Name" class+="form-control form-control-user" %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {% render_field form.username placeholder="Username" class+="form-control form-control-user" %}
+                    </div>
+                    <div class="form-group">
+                        {% render_field form.email placeholder="Email Address" class+="form-control form-control-user" %}
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            {% render_field form.password1 placeholder="Password" class+="form-control form-control-user" %}
+                        </div>
+                        <div class="col-sm-6">
+                            {% render_field form.password2 placeholder="Repeat Password" class+="form-control form-control-user" %}
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-primary btn-user btn-block">
+                </form>
+                <!-- END OF FORM -->
+
+                <hr>
+                <div class="text-center">
+                    <a class="small" href="{% url 'reset_password' %}">Forgot Password?</a>
+                </div>
+                <div class="text-center">
+                    <a class="small" href="{% url 'login_user' %}">Already have an account? Login!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Planning Duty{% endblock %}
+
+{% block page_header %} Duty for {{duty_date}} {% endblock %}
+{% block content %}
+
+<!-- Error Message for User (VALIDATION) -->
+{% for message in messages %}
+    
+    <div class="alert alert-danger">
+        <a class="close" href="#" data-dismiss="alert">×</a>
+           {{ message }}    
+    </div>
+
+{% endfor %}
+
+<!-- VIEW MAIN DUTY SCHEDULE -->
+<div style="display:inline-block; width: 75%; height: 100%;" class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Main Duty</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <form method="post" action="{% url 'delete_multiple_main_duties' %}">
+                {% csrf_token %}
+                {% render_table main_duty_table %}
+                <input type="submit" name="delete" value="Delete Duties" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW DUTY SCHEDULE -->
+<div style="display:inline-block; vertical-align: top; width: 24%;" class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Additional Duty</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            {% render_table addiional_duty_table %}
+        </div>
+    </div>
+</div>
+
+
+<!-- ADDING MAIN DUTY -->
+<div style="clear:left;width:75%; display:inline-block;" class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Adding Main Duty</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'add_main_duty' %}">
+            {% csrf_token %}
+            <label for="trooper">Trooper:</label>
+            <select name="trooper" id="trooper">
+                {% for trooper in troopers %}
+                    <option value="{{trooper.1}}">{{trooper.0}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="main_duty">Duty:</label>
+            <select name="main_duty" id="main_duty">
+                {% for main_duty in main_duty_list %}
+                    <option value="{{main_duty.1}}">{{main_duty.0}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            Start Date
+            {% render_field main_duty_form.start_time type="time" placeholder="Start Time" class+="form-control form-control-user" %}
+            <br>
+            End Date
+            {% render_field main_duty_form.end_time type="time" placeholder="End Time" class+="form-control form-control-user" %}
+            <br>
+            <input type="submit" class="btn btn-primary btn-user btn-block">
+        </form>
+    </div>
+</div>
+
+<!-- ADDING ADDITIONAL DUTY -->
+<div style="display:inline-block; vertical-align: top;width:24%; "class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Adding Additional Duty</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'add_additional_duty' %}"name="additional_form">
+            {% csrf_token %}
+            <label for="trooper">Trooper:</label>
+            <select name="trooper" id="trooper">
+                {% for trooper in troopers %}
+                    <option value="{{trooper.1}}">{{trooper.0}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="additional_duty">Duty:</label>
+            <select name="additional_duty" id="add_duty">
+                {% for additional_duty in additional_duty_list %}
+                    <option value="{{additional_duty.1}}">{{additional_duty.0}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            Time of Day
+            {% render_field additional_duty_form.time_of_day class+="form-control form-control-user" %}
+            <br>
+            <input type="submit" class="btn btn-primary btn-user btn-block">
+        </form>
+    </div>
+</div>
+
+<script language="JavaScript">
+    function toggle(source) {
+        checkboxes = document.getElementsByName('selection');
+        for(var i in checkboxes)
+            checkboxes[i].checked = source.checked;
+    }
+</script>
+    
+
+
+{% endblock %}

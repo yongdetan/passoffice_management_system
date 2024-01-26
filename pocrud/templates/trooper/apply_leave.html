@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Apply Leaves{% endblock %}
+
+{% block page_header %}Apply Leaves{% endblock %}
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">All Applied Leaves</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <form id="filterForm" method="get">
+                {% csrf_token %}
+                {{leave_filter.form.as_table}}
+                <button class="btn btn-primary" name="filter" type="submit">Search</button>
+            </form>
+            <br>
+            {% render_table table %}
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Leaves Form</h6>
+    </div>
+    <div class="card-body">
+        <form id="leaveForm" data-leave-url="{% url 'load_leaves' %}" method="post">
+            {% csrf_token %}
+            {{ leave_form.as_p }}
+            <input type="submit" class="btn btn-primary btn-user btn-block">
+        </form>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    $("#leaveForm #id_trooper").change(function () {
+        const url = $("#leaveForm").attr("data-leave-url");  // get the url of the `load_cities` view
+        const trooperId = $(this).val();
+        $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+            data: {
+                'trooper_id': trooperId,
+            },
+            success: function (data) {   // `data` is the return of the `load_cities` view function
+                
+                $("#id_current_leave").html(data);  // replace the contents of the city input with the data that came from the server
+            }
+        });
+
+    });
+</script>
+
+
+
+{% endblock %}
+
+

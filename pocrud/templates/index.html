@@ -1,0 +1,275 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Home{% endblock %}
+
+
+{% block page_header %}Home{% endblock %}
+{% block content %}
+
+    <center> 
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Strength for {{today}}</h6>
+        </div>
+        <div style="padding-top: 2%;"> 
+            <div style="display:inline-block; vertical-align: top; width: 24%;" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Total Strength</h6>
+                </div>
+                <div class="card-body">
+                        <center> {{total_strength}} </center>
+                </div>
+            </div>
+
+            <div style="display:inline-block; vertical-align: top; width: 24%;" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Current Strength</h6>
+                </div>
+                <div class="card-body">
+                        <center> {{present_strength}} </center>
+                </div>
+            </div>
+
+            <div style="display:inline-block; vertical-align: top; width: 24%;" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Absent</h6>
+                </div>
+                <div class="card-body">
+                        <center> {{absent_strength}} </center>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div style="display:inline-block; vertical-align: top; width: 24%;" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Present Troopers</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {% render_table present_table %}
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:inline-block; vertical-align: top; width: 24%;" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Absent Troopers</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {% render_table absent_table %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </center>
+
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Peak & Secure</h6>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <form method="get">
+                {{leave_filter.form.as_table}}
+                <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+                <br>
+                {% render_table peak_secure_table %}
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Dashboard</h6>
+        </div>
+        <div class="card-body">
+                <div class="chart-container" style="padding-bottom:50px; display:inline-block; position: relative; height:50vh; width:80vw">
+                    <button onclick="resetDate()">RESET</button>
+                    <input onchange="filterDate()" type="date" id="startdate">
+                    <input onchange="filterDate()" type="date" id="enddate">
+                    <canvas id="chart"></canvas>
+                </div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container" style="display:inline-block; position: relative;vertical-align: top; height:50vh; width:40vw">
+                <canvas id="daily_leaves_chart"></canvas>
+            </div>
+            <div class="chart-container" style="display:inline-block; position: relative;vertical-align: top; height:50vh; width:40vw">
+                <canvas id="most_leaves_chart"></canvas>
+            </div> 
+        </div>
+    </div>
+
+
+    <script>
+        let trooper_duty_chart_ctx = document.getElementById('chart');
+        let trooper_duty_chart;
+        $.ajax({
+        url: '{% url "trooper_duty_chart" %}',
+        success: function(response){
+            trooper_duty_chart = new Chart(trooper_duty_chart_ctx, {
+                    type: 'bar',
+                    data: {
+                    labels: response.labels,
+                    datasets: [{
+                        label: 'Total Hours',
+                        data: response.data,
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        title:{
+                            display: true,
+                            text: 'Total Hours done by Troopers'
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        });
+
+        let daily_leaves_chart_ctx = document.getElementById('daily_leaves_chart');
+        let daily_leaves_chart;
+        $.ajax({
+        url: '{% url "daily_leaves_chart" %}',
+        success: function(response){
+            myChart = new Chart(daily_leaves_chart_ctx, {
+                    type: 'line',
+                    data: {
+                    labels: response.labels,
+                    datasets: [{
+                        label: 'Number of Troopers on Leave',
+                        data: response.data,
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        title:{
+                            display: true,
+                            text: 'Troopers on Leave (DAILY)'
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        });
+
+        let most_leaves_chart_ctx = document.getElementById('most_leaves_chart');
+        let most_leaves_chart;
+        $.ajax({
+        url: '{% url "most_leaves_chart" %}',
+        success: function(response){
+            myChart = new Chart(most_leaves_chart_ctx, {
+                    type: 'bar',
+                    data: {
+                    labels: response.labels,
+                    datasets: [{
+                        label: 'Total Number of Days on Leave',
+                        data: response.data,
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        title:{
+                            display: true,
+                            text: 'Total Leaves taken by Trooper'
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        });
+
+        function updateChart(chart, data) {
+
+        // Update chart data
+        chart.data.labels = data.labels;
+        chart.data.datasets[0].data = data.data;
+        
+        chart.update();
+
+        }
+
+        function filterDate(){
+            $.ajax({
+                type: "GET",
+                url: '{% url "trooper_duty_chart" %}',
+                data: {
+                    "startdate": document.getElementById('startdate').value,
+                    "enddate": document.getElementById('enddate').value,
+                },
+                dataType: "json",
+                success: function (data) {
+                    updateChart(trooper_duty_chart, data),
+                    $.ajax({
+                        type: "GET",
+                        url: '{% url "index" %}',
+                        data: {
+                            "startdate": document.getElementById('startdate').value,
+                            "enddate": document.getElementById('enddate').value,
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                        },
+                    });;
+                },
+            });
+        }
+
+        function resetDate(){
+            $.ajax({
+                type: "GET",
+                url: '{% url "trooper_duty_chart" %}',
+                data: {
+                },
+                dataType: "json",
+                success: function (data) {
+                    document.getElementById("startdate").value = "";
+                    document.getElementById("enddate").value = "";
+                    updateChart(trooper_duty_chart, data);
+                },
+            });
+        }
+
+        
+    </script>
+  
+
+{% endblock %}
+

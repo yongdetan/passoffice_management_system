@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Manage Leaves{% endblock %}
+
+{% block page_header %}Manage Leaves{% endblock %}
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">All Created Leaves</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <form method="get">
+                {{leave_filter.form.as_table}}
+                
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+            <br>
+            {% render_table table %}
+        </div>
+    </div>
+</div>
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Leaves Form</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" class="btn btn-primary btn-user btn-block">
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+

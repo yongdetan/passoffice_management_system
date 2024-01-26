@@ -1,0 +1,42 @@
+{% extends 'base/base_prelogin.html' %}
+{% load widget_tweaks %}
+{% load render_table from django_tables2 %}
+{% block title%}Reset Password{% endblock %}
+
+{% block content %}
+
+{% if form %}
+    <div class="p-5">
+        <div class="text-center">
+            <h1 class="h4 text-gray-900 mb-4">Reset Password</h1>
+            <p>
+                Enter your new password below.
+            </p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-primary btn-user btn-block">
+        </form>
+        <hr>
+        <div class="text-center">
+            <a class="small" href="{% url 'login_user' %}">Remembered your password? Login!</a>
+        </div>
+        <div class="text-center">
+            <a class="small" href="{% url 'register' %}">Create a new Account!</a>
+        </div>
+    </div>
+
+{% else %}
+<div class="p-5">
+    <div class="text-center">
+        <h1 class="h4 text-gray-900 mb-4">Reset Password</h1>
+        <p>
+            The link to reset your password is expired. Kindly click <a href="{%url 'reset_password' %}">here</a> to get a new link.
+        </p>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
