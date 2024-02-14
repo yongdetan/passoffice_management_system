@@ -96,6 +96,7 @@ class TrooperService():
             temp_dic['rank'] = dic['rank']
             temp_dic['first_name'] = dic['first_name']
             temp_dic['last_name'] = dic['last_name']
+            temp_dic['initial'] = dic['initial']
 
             main_data.append(temp_dic)
             
@@ -235,8 +236,8 @@ class MainDutyService():
             start = dic['start_time']
             for h in range(hours):
                 temp_dict = defaultdict(lambda:('-'))
-                start_time = (datetime.datetime.combine(datetime.datetime.today(), start) + datetime.timedelta(hours=h)).strftime('%H:%M %p')
-                end_time = (datetime.datetime.combine(datetime.datetime.today(), start) + datetime.timedelta(hours=h+1)).strftime('%H:%M %p')
+                start_time = (datetime.datetime.combine(datetime.datetime.today(), start) + datetime.timedelta(hours=h)).strftime('%H:%M')
+                end_time = (datetime.datetime.combine(datetime.datetime.today(), start) + datetime.timedelta(hours=h+1)).strftime('%H:%M')
                 temp_dict['start'] = start_time
                 temp_dict['end'] = end_time
                     
@@ -245,10 +246,10 @@ class MainDutyService():
                 #grouping common start and end time together
                 if start_time in main_duplicates:
                     index = main_duplicates[start_time]
-                    main_data[index][main_duty] = (trooper.first_name + ' ' + trooper.last_name)
+                    main_data[index][main_duty] = (trooper.initial)
                     main_data[index]['id'].append(dic['id'])
                 else:
-                    temp_dict[main_duty] = (trooper.first_name + ' ' + trooper.last_name)
+                    temp_dict[main_duty] = (trooper.initial)
                     main_data.append(temp_dict)
                     main_duplicates[start_time] = len(main_data) - 1
 
@@ -304,7 +305,7 @@ class AdditionalDutyService():
             additional_duty = Additional_Duty.objects.get(id=dict['add_duty_id']).name
             trooper = Trooper.objects.get(id=dict['trooper_id'])
 
-            temp_dict[additional_duty] = (trooper.first_name + ' ' + trooper.last_name)
+            temp_dict[additional_duty] = trooper.initial
             temp_dict['time_of_day'] = dict['time_of_day']
             temp_dict['id'] = dict['id']
 

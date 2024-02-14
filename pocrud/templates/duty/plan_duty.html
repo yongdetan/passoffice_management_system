@@ -16,8 +16,9 @@
 
 {% endfor %}
 
+<div id="main-duty" style="margin-bottom: 25px;"> 
 <!-- VIEW MAIN DUTY SCHEDULE -->
-<div style="display:inline-block; width: 75%; height: 100%;" class="card shadow mb-4">
+<div style="display:inline-block; width: 75%; height: 10%;" class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Main Duty</h6>
     </div>
@@ -26,6 +27,7 @@
             <form method="post" action="{% url 'delete_multiple_main_duties' %}">
                 {% csrf_token %}
                 {% render_table main_duty_table %}
+                
                 <input type="submit" name="delete" value="Delete Duties" />
             </form>
         </div>
@@ -44,6 +46,25 @@
     </div>
 </div>
 
+<button id="dl-png">Download as PNG</button>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        document.getElementById("dl-png").onclick = function() {
+            const screenshotTarget = document.getElementById('main-duty');
+
+            html2canvas(screenshotTarget).then((canvas) => {
+                const base64image = canvas.toDataURL("image/png");
+                var anchor = document.createElement('a');
+                anchor.setAttribute("href", base64image);
+                anchor.setAttribute("download", "duty-image.png");
+                anchor.click();
+                anchor.remove();
+
+            });
+        };
+    </script>
+</div>
+    
 
 <!-- ADDING MAIN DUTY -->
 <div style="clear:left;width:75%; display:inline-block;" class="card shadow mb-4">

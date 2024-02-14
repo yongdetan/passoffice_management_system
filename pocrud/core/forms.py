@@ -52,6 +52,7 @@ class RegisterTrooperForm(forms.ModelForm):
     rank = forms.ChoiceField(choices=RANK_CHOICES)
     first_name = forms.CharField()
     last_name = forms.CharField(required=False)
+    initial = forms.CharField()
     
     class Meta:
         model = Trooper

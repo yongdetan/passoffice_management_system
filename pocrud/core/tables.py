@@ -59,6 +59,7 @@ class TrooperTable(tables.Table):
     rank = tables.Column(verbose_name='Rank')
     first_name = tables.Column(verbose_name='First Name')
     last_name = tables.Column(verbose_name='Last Name')
+    initial = tables.Column(verbose_name='Initial')
     update = tables.Column(verbose_name='Update', orderable=False)
     delete = tables.Column(verbose_name='Delete', orderable=False)
 
@@ -88,8 +89,8 @@ class MainDutyTable(tables.Table):
 
 class TrooperMainDutyTable(tables.Table):
     selection = tables.CheckBoxColumn(accessor='id',attrs = { "th__input": {"onclick": "toggle(this)"}}, orderable=False)
-    start = tables.Column(verbose_name='Start Time')
-    end = tables.Column(verbose_name='End Time')
+    start = tables.Column(verbose_name='Start')
+    end = tables.Column(verbose_name='End')
     delete = tables.Column(verbose_name='Delete', orderable=False)
 
     def render_delete(self, record):
@@ -98,7 +99,7 @@ class TrooperMainDutyTable(tables.Table):
         return format_html('<a href="{}">Delete</a>', delete_url)
         
     class Meta:
-        attrs = {'class': 'table table-bordered'}
+        attrs = {'class': 'table table-bordered', 'style':'font-weight:bold'}
         sequence = ('selection', '...','delete')
 
 
@@ -123,7 +124,7 @@ class TrooperAdditionalDutyTable(tables.Table):
         return format_html('<a href="{}">Delete</a>', delete_url)
 
     class Meta:
-        attrs = {'class': 'table table-bordered'}
+        attrs = {'class': 'table table-bordered', 'style':'font-weight:bold'}
         sequence = ('...','delete')
 
 

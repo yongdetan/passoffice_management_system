@@ -225,6 +225,7 @@ def manage_trooper(request):
                 rank = data['rank'],
                 first_name = data['first_name'].upper(),
                 last_name = data['last_name'].upper(),
+                initial = data['initial'].upper(),
                 commander = user
             )
             trooper.save()
@@ -246,6 +247,7 @@ def update_trooper(request, trooper_id):
             selected_trooper.rank = data['rank']
             selected_trooper.first_name = data['first_name'].upper()
             selected_trooper.last_name = data['last_name'].upper()
+            selected_trooper.initial = data['initial'].upper()  
             selected_trooper.save()
             return redirect('manage_trooper')
     return render(request, 'trooper/update_trooper.html', context=context)
@@ -678,8 +680,12 @@ def add_main_duty(request):
                 try:
                     new_duty_time.full_clean()
                     new_duty_time.save()
+                #if user tries to insert duty time that already exist, replace the old duty trooper with new one.    
                 except ValidationError:
-                    messages.error(request,'Duty for the selected timings already exist.')
+                    old_duty_time = Main_Duty_Time.objects.get(start_time=start_time, end_time=end_time, main_duty=main_duty_selected, duty_date=selected_duty_date)
+                    old_duty_time.trooper = trooper_selected
+                    old_duty_time.save()
+
             
             return redirect('plan_duty')
 

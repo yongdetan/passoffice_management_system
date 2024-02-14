@@ -14,6 +14,7 @@ class Trooper(models.Model):
     rank = models.CharField(choices=RANK_CHOICES, default='REC')
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30, blank=True)
+    initial = models.CharField(max_length=2, blank=True)
     commander = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
